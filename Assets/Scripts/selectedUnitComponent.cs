@@ -5,6 +5,8 @@ using UnityEngine;
 public class selectedUnitComponent : MonoBehaviour
 {
     [SerializeField]
+    private Vector3 pool_Position = new Vector3(0,-50,0);
+    [SerializeField]
     private UnityEngine.AI.NavMeshAgent navMeshAgent;
     [SerializeField]
     private Camera mainCamera;
@@ -19,19 +21,19 @@ public class selectedUnitComponent : MonoBehaviour
     }
     void LateUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        /*if (Input.GetKeyDown(KeyCode.Mouse1))
         {
             MoveToMousePoint();
-        }
+        }*/
     }
 
-    private void MoveToMousePoint()
+    public void MoveToPoint(Vector3 destination)
     {
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit raycastHit))
-        {
-            navMeshAgent.destination = raycastHit.point;
-        }
+            navMeshAgent.destination =destination;
+    }
+    public void PlaceDestinationCircle()
+    {
+
     }
 
     private void OnDestroy()
