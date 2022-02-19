@@ -24,13 +24,10 @@ public class UnitsSelectionComponent : MonoBehaviour
     [SerializeField]
     float z;
     [SerializeField]
-    float interval;
-    [SerializeField]
-    int groupCount;
+    int selectedUnitsCount;
     [SerializeField]
     Vector3 mousePoint;
-    [SerializeField]
-    int selectedUnitsCount;
+
     //----- Mouse Position Vectors--------
     private Vector3 startSelectionPosition;
     [SerializeField]
@@ -82,17 +79,75 @@ public class UnitsSelectionComponent : MonoBehaviour
         selectedUnits.Clear();
     }
 
-    private void SmallGroupDirection(Vector3 mousePoint,int groupCount)
+    private void GroupDirection(Vector3 mousePoint, int groupCount, int interval, int divider)
     {
+        x = -(interval);
+        z = -(interval);
+        foreach (KeyValuePair<int, GameObject> pair in selectedUnits)
+        {
+            if (pair.Value != null)
+            {
+                Debug.Log("mousePoint: " + mousePoint + "   " + "mousePoint +Vector3: " + (mousePoint + new Vector3(x, 0, z)));
+                pair.Value.gameObject.GetComponent<NavMeshAgent>().destination = mousePoint + new Vector3(x , 0, z);
+                pair.Value.gameObject.GetComponent<selectedUnitComponent>().PlaceDestinationCircle();
+            }
 
+            z += 2;
+            if (z > interval)
+            {
+                z = -(interval);
+                x += interval / 2;
+            }
+
+        }
+    }
+    /*private void SmallGroupDirection(Vector3 mousePoint,int groupCount)
+    {
+        interval = 3;
+        x = -(interval);
+        z = -(interval);
+        foreach (KeyValuePair<int, GameObject> pair in selectedUnits)
+        {
+            if (pair.Value != null)
+            {
+                Debug.Log("mousePoint: " + mousePoint + "   " + "mousePoint +Vector3: " + (mousePoint + new Vector3(x, 0, z)));
+                pair.Value.gameObject.GetComponent<NavMeshAgent>().destination = mousePoint + new Vector3(x , 0, z);
+                pair.Value.gameObject.GetComponent<selectedUnitComponent>().PlaceDestinationCircle();
+            }
+
+            z += 2;
+            if (z > interval)
+            {
+                z = -(interval);
+                x += interval / 2;
+            }
+        }
     }
     private void MediumGroupDirection(Vector3 mousePoint,int groupCount)
     {
+            interval = 6;
+            x = -(interval);
+            z = -(interval);
+            foreach (KeyValuePair<int, GameObject> pair in selectedUnits)
+            {
+                if (pair.Value != null)
+                {
+                    Debug.Log("mousePoint: " + mousePoint + "   " + "mousePoint +Vector3: " + (mousePoint + new Vector3(x, 0, z)));
+                    pair.Value.gameObject.GetComponent<NavMeshAgent>().destination = mousePoint + new Vector3(x , 0, z);
+                    pair.Value.gameObject.GetComponent<selectedUnitComponent>().PlaceDestinationCircle();
+                }
 
-    }
+                z += 2;
+                if (z > interval)
+                {
+                    z = -(interval);
+                    x += interval / 2;
+                }
+            }
+     }
     private void LargeGroupDirection(Vector3 mousePoint,int groupCount)
     {
-        interval = 7;
+        interval = 9;
         x = -(interval);
         z = -(interval);
         foreach (KeyValuePair<int, GameObject> pair in selectedUnits)
@@ -112,20 +167,19 @@ public class UnitsSelectionComponent : MonoBehaviour
             }
 
         }
-    }
+    }*/
     private void Update()
     {
         selectedUnitsCount= selectedUnits.Count;
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            groupCount = selectedUnits.Count;
 
-            if (groupCount > 0)
-                SmallGroupDirection(GetMousePoint(), groupCount);
-            if (groupCount > 12)
-                MediumGroupDirection(GetMousePoint(), groupCount);
-            if (groupCount > 40)
-                LargeGroupDirection(GetMousePoint(), groupCount);
+            if (selectedUnitsCount > 0)
+                GroupDirection(GetMousePoint(), selectedUnitsCount,3,1);
+            if (selectedUnitsCount > 12)
+                GroupDirection(GetMousePoint(), selectedUnitsCount,6,1);
+            if (selectedUnitsCount > 70)
+                GroupDirection(GetMousePoint(), selectedUnitsCount,9,6);
         }
             //1. when left mouse button clicked (but not released)
             if (Input.GetMouseButtonDown(0))
