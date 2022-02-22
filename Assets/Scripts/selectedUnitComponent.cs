@@ -15,7 +15,6 @@ public class selectedUnitComponent : MonoBehaviour
     {
 
         navMeshAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        mainCamera = Camera.main;
         
        gameObject.transform.GetChild(1).gameObject.SetActive(true);
     }

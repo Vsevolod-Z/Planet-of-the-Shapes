@@ -12,7 +12,8 @@ public class UnitsSelectionComponent : MonoBehaviour
     static Texture2D _whiteTexture;
     bool dragSelect;
     RaycastHit hit;
-    Camera mainCamera;
+    [SerializeField]
+    public Camera playerCamera;
     // ---------------------------------------Units Dictionares----------------------------------------
     [SerializeField]
     public Dictionary<int, GameObject> selectedUnits = new Dictionary<int, GameObject>();
@@ -47,7 +48,7 @@ public class UnitsSelectionComponent : MonoBehaviour
 
     private void Start()
     {
-        mainCamera = Camera.main;
+        //playerCamera = GetComponentInChildren<Camera>();
         dragSelect = false;
     }
     public void AddSelected(GameObject go)
@@ -190,7 +191,7 @@ public class UnitsSelectionComponent : MonoBehaviour
             //2. while left mouse button held
             if (Input.GetMouseButton(0))
             {
-                if ((startSelectionPosition - Input.mousePosition).magnitude > 20)
+                if ((startSelectionPosition - Input.mousePosition).magnitude > 10)
                 {
                     dragSelect = true;
                 }
@@ -201,7 +202,7 @@ public class UnitsSelectionComponent : MonoBehaviour
             {
                 if (dragSelect == false) //single select
                 {
-                    Ray ray = Camera.main.ScreenPointToRay(startSelectionPosition);
+                    Ray ray = playerCamera.ScreenPointToRay(startSelectionPosition);
 
                     if (Physics.Raycast(ray, out hit, 50000.0f, layerMaskForSelect))
                     {
@@ -235,13 +236,13 @@ public class UnitsSelectionComponent : MonoBehaviour
 
                     foreach (Vector2 corner in corners)
                     {
-                        Ray ray = Camera.main.ScreenPointToRay(corner);
+                        Ray ray = playerCamera.ScreenPointToRay(corner);
 
                         if (Physics.Raycast(ray, out hit, 50000.0f, layerMaskForRays))
                         {
                             verts[i] = new Vector3(hit.point.x, hit.point.y, hit.point.z);
                             vecs[i] = ray.origin - hit.point;
-                            Debug.DrawLine(Camera.main.ScreenToWorldPoint(corner), hit.point, Color.red, 1.0f);
+                            Debug.DrawLine(playerCamera.ScreenToWorldPoint(corner), hit.point, Color.red, 1.0f);
                         }
                         i++;
                     }
@@ -361,17 +362,11 @@ public class UnitsSelectionComponent : MonoBehaviour
             }
 
         }
-
-        private void MoveToPoint(Vector3 destination)
-        {
-                //navMeshAgent.destination = destination;
-        }
     private Vector3 GetMousePoint()
     {
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit raycastHit))
         {
-          
            return raycastHit.point;
         }
         return raycastHit.point;
